@@ -31,7 +31,7 @@ class ImageItem extends Component {
         source={require('./circle-check.png')}
       />;
 
-    var image = item.node.image;
+    var image = item;
 
     return (
       <TouchableOpacity

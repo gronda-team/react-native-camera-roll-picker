@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import PropTypes from 'prop-types';
+import GalleryManager from 'react-native-gallery-manager';
 
 import ImageItem from './ImageItem';
 
@@ -42,14 +43,16 @@ class CameraRollPicker extends Component {
       this.setState({loadingMore: true}, () => { this._fetch(); });
     }
   }
-
+  
   _fetch() {
-    var {groupTypes, assetType} = this.props;
+    var {groupTypes, type} = this.props;
 
     var fetchParams = {
-      first: 1000,
-      groupTypes: groupTypes,
-      assetType: assetType,
+    //  first: 1000,
+  //    groupTypes: groupTypes,
+      startFrom: 0,
+      type: type,
+      limit: 100
     };
 
     if (Platform.OS === "android") {
@@ -58,26 +61,26 @@ class CameraRollPicker extends Component {
     }
 
     if (this.state.lastCursor) {
-      fetchParams.after = this.state.lastCursor;
+      fetchParams.startFrom = this.state.lastCursor;
     }
 
-    CameraRoll.getPhotos(fetchParams)
+    GalleryManager.getAssets(fetchParams)
       .then((data) => this._appendImages(data), (e) => console.log(e));
   }
 
   _appendImages(data) {
-    var assets = data.edges;
+    var assets = data.assets;
     var newState = {
       loadingMore: false,
       initialLoading: false,
     };
 
-    if (!data.page_info.has_next_page) {
+    if (!data.hasMore) {
       newState.noMore = true;
     }
 
     if (assets.length > 0) {
-      newState.lastCursor = data.page_info.end_cursor;
+      newState.lastCursor = data.next;
       newState.images = this.state.images.concat(assets);
       newState.dataSource = this.state.dataSource.cloneWithRows(
         this._nEveryRow(newState.images, this.props.imagesPerRow)
@@ -141,7 +144,7 @@ class CameraRollPicker extends Component {
       containerWidth
     } = this.props;
 
-    var uri = item.node.image.uri;
+    var uri = item.uri;
     var isSelected = (this._arrayObjectIndexOf(selected, 'uri', uri) >= 0) ? true : false;
 
     return (
@@ -276,7 +279,7 @@ CameraRollPicker.propTypes = {
     'SavedPhotos',
   ]),
   maximum: PropTypes.number,
-  assetType: PropTypes.oneOf([
+  type: PropTypes.oneOf([
     'Photos',
     'Videos',
     'All',
@@ -304,7 +307,7 @@ CameraRollPicker.defaultProps = {
   imagesPerRow: 3,
   imageMargin: 5,
   selectSingleItem: false,
-  assetType: 'Photos',
+  type: 'Photos',
   backgroundColor: 'white',
   selected: [],
   callback: function(selectedImages, currentImage) {
