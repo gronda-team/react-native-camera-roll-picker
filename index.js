@@ -280,9 +280,9 @@ CameraRollPicker.propTypes = {
   ]),
   maximum: PropTypes.number,
   type: PropTypes.oneOf([
-    'Photos',
-    'Videos',
-    'All',
+    'photos',
+    'videos',
+    'all',
   ]),
   selectSingleItem: PropTypes.bool,
   imagesPerRow: PropTypes.number,
@@ -307,7 +307,7 @@ CameraRollPicker.defaultProps = {
   imagesPerRow: 3,
   imageMargin: 5,
   selectSingleItem: false,
-  type: 'Photos',
+  type: 'all',
   backgroundColor: 'white',
   selected: [],
   callback: function(selectedImages, currentImage) {
