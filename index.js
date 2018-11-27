@@ -5,7 +5,7 @@ import {
   StyleSheet,
   View,
   Text,
-  ListView,
+  FlatList,
   ActivityIndicator,
 } from 'react-native';
 import PropTypes from 'prop-types';
@@ -24,7 +24,7 @@ class CameraRollPicker extends Component {
       initialLoading: true,
       loadingMore: false,
       noMore: false,
-      dataSource: new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2}),
+      dataSource: [], // new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2}),
     };
   }
 
@@ -82,9 +82,7 @@ class CameraRollPicker extends Component {
     if (assets.length > 0) {
       newState.lastCursor = data.next;
       newState.images = this.state.images.concat(assets);
-      newState.dataSource = this.state.dataSource.cloneWithRows(
-        this._nEveryRow(newState.images, this.props.imagesPerRow)
-      );
+      newState.dataSource = this._nEveryRow(newState.images, this.props.imagesPerRow);
     }
 
     this.setState(newState);
@@ -111,18 +109,17 @@ class CameraRollPicker extends Component {
         </View>
       );
     }
-
-    var listViewOrEmptyText = dataSource.getRowCount() > 0 ? (
-      <ListView
-        style={{flex: 1,}}
+    var listViewOrEmptyText = dataSource.length > 0 ? (
+      <FlatList
+        style={{flex: 1}}
         scrollRenderAheadDistance={scrollRenderAheadDistance}
         initialListSize={initialListSize}
         pageSize={pageSize}
         removeClippedSubviews={removeClippedSubviews}
         renderFooter={this._renderFooterSpinner.bind(this)}
         onEndReached={this._onEndReached.bind(this)}
-        dataSource={dataSource}
-        renderRow={rowData => this._renderRow(rowData)} />
+        data={dataSource}
+        renderItem={rowData => this._renderRow(rowData)} />
     ) : (
       <Text style={[{textAlign: 'center'}, emptyTextStyle]}>{emptyText}</Text>
     );
@@ -162,7 +159,7 @@ class CameraRollPicker extends Component {
   }
 
   _renderRow(rowData) {
-    var items = rowData.map((item) => {
+    var items = rowData.item.map((item) => {
       if (item === null) {
         return null;
       }
@@ -207,10 +204,8 @@ class CameraRollPicker extends Component {
     }
 
     this.setState({
-      selected: selected,
-      dataSource: this.state.dataSource.cloneWithRows(
-        this._nEveryRow(this.state.images, imagesPerRow)
-      ),
+      selected,
+      dataSource: this._nEveryRow(this.state.images, imagesPerRow)
     });
 
     callback(selected, image);
