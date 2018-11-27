@@ -121,10 +121,11 @@ class CameraRollPicker extends Component {
           initialListSize={initialListSize}
           pageSize={pageSize}
           removeClippedSubviews={removeClippedSubviews}
-          renderFooter={this._renderFooterSpinner.bind(this)}
-          onEndReached={this._onEndReached.bind(this)}
+          renderFooter={this._renderFooterSpinner}
+          onEndReached={this._onEndReached}
           data={dataSource}
           renderItem={rowData => this._renderRow(rowData)}
+          keyExtractor={item => this.getKeyForRow(item)}
         />
       ) : (
         <Text style={[{ textAlign: 'center' }, emptyTextStyle]}>
@@ -146,6 +147,14 @@ class CameraRollPicker extends Component {
         {listViewOrEmptyText}
       </View>
     );
+  }
+
+  getKeyForRow(item) {
+    if(item[0]) {
+      return item[0].uri;
+    }
+
+    return null;
   }
 
   _renderImage(item) {
@@ -170,7 +179,7 @@ class CameraRollPicker extends Component {
         selectedMarker={selectedMarker}
         imagesPerRow={imagesPerRow}
         containerWidth={containerWidth}
-        onClick={this._selectImage.bind(this)}
+        onClick={this._selectImage}
       />
     );
   }
@@ -186,20 +195,20 @@ class CameraRollPicker extends Component {
     return <View style={styles.row}>{items}</View>;
   }
 
-  _renderFooterSpinner() {
+  _renderFooterSpinner = () => {
     if (!this.state.noMore) {
       return <ActivityIndicator style={styles.spinner} />;
     }
     return null;
   }
 
-  _onEndReached() {
+  _onEndReached = () => {
     if (!this.state.noMore) {
       this.fetch();
     }
   }
 
-  _selectImage(image) {
+  _selectImage = (image) => {
     const { maximum, imagesPerRow, callback, selectSingleItem } = this.props;
 
     const selected = this.state.selected,
