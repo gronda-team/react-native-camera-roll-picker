@@ -13,6 +13,9 @@ CameraRoll Picker component for React native
 $ npm install react-native-camera-roll-picker --save
 ```
 
+* NPM install (for react native gallery manager)
+- then need to link it according to their descriptions: https://github.com/pentarex/react-native-gallery-manager
+
 * Require component
 ```
 import CameraRollPicker from 'react-native-camera-roll-picker';
