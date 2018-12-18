@@ -51,7 +51,7 @@ class CameraRollPicker extends Component {
       //    groupTypes: groupTypes,
       startFrom: 0,
       type,
-      limit: 100
+      limit: 50
     };
 
     if (Platform.OS === 'android') {
@@ -180,6 +180,7 @@ class CameraRollPicker extends Component {
         imagesPerRow={imagesPerRow}
         containerWidth={containerWidth}
         onClick={this._selectImage}
+        isVideo={item.type === 'video'}
       />
     );
   }
