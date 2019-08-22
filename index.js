@@ -65,7 +65,11 @@ class CameraRollPicker extends Component {
 
     GalleryManager.getAssets(fetchParams).then(
       data => this._appendImages(data),
-      e => console.log(e)
+      (e) => {
+        // workaround in case there's an error
+        this._appendImages({ assets: [] });
+        console.log({ e });
+      }
     );
   }
 
@@ -106,6 +110,8 @@ class CameraRollPicker extends Component {
       loader
     } = this.props;
 
+    console.log("React Native Camera Roll Picker:", { state: this.state });
+
     if (this.state.initialLoading) {
       return (
         <View style={[styles.loader, { backgroundColor }]}>
@@ -128,10 +134,12 @@ class CameraRollPicker extends Component {
           keyExtractor={item => this.getKeyForRow(item)}
         />
       ) : (
-        <Text style={[{ textAlign: 'center' }, emptyTextStyle]}>
-          {emptyText}
-        </Text>
-      );
+          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+            <Text style={[{ textAlign: 'center' }, emptyTextStyle]}>
+              {emptyText}
+            </Text>
+          </View>
+        );
 
     return (
       <View
@@ -150,7 +158,7 @@ class CameraRollPicker extends Component {
   }
 
   getKeyForRow(item) {
-    if(item[0]) {
+    if (item[0]) {
       return item[0].uri;
     }
 
@@ -327,7 +335,7 @@ CameraRollPicker.defaultProps = {
   type: 'all',
   backgroundColor: 'white',
   selected: [],
-  callback: function(selectedImages, currentImage) {
+  callback: function (selectedImages, currentImage) {
     console.log(currentImage);
     console.log(selectedImages);
   },
