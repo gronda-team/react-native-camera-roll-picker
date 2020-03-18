@@ -25,6 +25,6 @@
   },
   "homepage": "https://github.com/jeanpan/react-native-camera-roll-picker#readme",
   "dependencies": {
-    "react-native-gallery-manager": "^1.0.9"
+    "react-native-gallery-manager": "git+https://git@github.com/gronda-team/react-native-gallery-manager.git#master"
   }
 }
